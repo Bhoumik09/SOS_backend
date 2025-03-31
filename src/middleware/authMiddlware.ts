@@ -9,6 +9,7 @@ export const checkAuth = async (
   next: NextFunction
 ) => {
   const token: string|undefined = req.headers.authorization;
+  
   console.log(token);
   if (!token) {
     res.status(401).json({ error: "Unauthorized" });
@@ -17,7 +18,7 @@ export const checkAuth = async (
   const realToken=token.split(" ")[1];
 
   const { data: user, error } = await supabase.auth.getUser(realToken);
-
+  console.log(user);
   if (error || !user) {
     res.status(401).json({ error: "Invalid Token" });
     return;
