@@ -4,5 +4,5 @@ node_modules
 /dist-server
 /dist-client
 /dist-ssr
-package-lock.json
+# package-lock.json
 .vercel
