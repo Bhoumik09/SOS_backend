@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { AuthRequest } from "../middleware/authMiddlware";
 
 export const login = async (req: AuthRequest, res: Response) => {
+  console.log("email")
 console.log(req.body)
   const { email, password }: { email: string; password: string } = req.body;
   if (!email || !password) {
@@ -18,13 +19,9 @@ console.log(req.body)
     res.status(401).json({ error: error.message });
     return;
   }
-  res.cookie("token", data.session.access_token, {
-    httpOnly: true, // Secure and inaccessible to JavaScript
-  });
-  console.log("Cookies being set:", res.getHeaders()["set-cookie"]);
+  
 
-  console.log(data.session.access_token)
-  res.status(200).json({ message: "Logged in successfully" });
+  res.status(200).json({ message: "Logged in successfully", access_token:data.session.access_token });
 };
 export const fetchUser = async (req: AuthRequest, res: Response) => {
   console.log(req.user.id)

@@ -11,11 +11,12 @@ import locationRouter from './routes/locationsRouter';
 import { Request, Response } from 'express';
 app.use(
   cors({
-    origin: "http://localhost:5173", // Change to frontend URL
-    credentials: true, // Important for sending cookies
+    origin: (origin, callback) => {
+      callback(null, true); // Allows all origins
+    },
+    credentials: true, // Required for cookies
   })
 );
-
 app.use(cookieParser())
 dotenv.config();
 app.use(express.json());
