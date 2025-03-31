@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from 'cors'
 import authRouter from './routes/auth';
 import locationRouter from './routes/locationsRouter';
+import { Request, Response } from 'express';
 app.use(
   cors({
     origin: "http://localhost:5173", // Change to frontend URL
@@ -48,6 +49,9 @@ const createUser = async () => {
     console.log("User signed up:", data);
   };
 // createUser();
+app.get('/',(req:Request,res:Response)=>{
+  res.send("jjjsjjsjjsjjs");
+})
 app.listen(PORT,"0.0.0.0", ()=>{
     console.log("Working at port ", PORT);
 })
