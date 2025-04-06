@@ -1,12 +1,10 @@
-import { supabase } from "../config/supabase";
+import { supabase, supabaseUpload } from "../config/supabase";
 import dotenv from "dotenv";
 import { activeTimers } from "./globalConstants";
+import axios from "axios";
 dotenv.config();
 const HF_API_KEY = process.env.HF_API_KEY!;
 const HF_MODEL_URL = process.env.HF_MODEL_URL!;
-
-import {Client} from "@gradio/client";
-
 
 // 🔥 Function to start broadcasting the request to nearby stations
 if (!HF_API_KEY || !HF_MODEL_URL) {
@@ -45,7 +43,15 @@ export const predictFireSeverity=async(fileBuffer: Buffer): Promise<void>=> {
     if (!fileBuffer || fileBuffer.length === 0) {
       throw new Error("❌ Invalid image buffer provided.");
     }
-
+    const response = await axios.post("http://127.0.0.1:8000/predict", fileBuffer, {
+      headers: {
+          "Content-Type": "application/octet-stream", // Indicating raw bytes
+      },
+      responseType: "json",
+    
+  });
+  console.log(response);
+  console.log("Prediction Response:", response.data);
     // Send the image to the Gradio model
     // if (!response || !response.data) {
     //   throw new Error("❌ No valid response from Gradio API.");
@@ -73,19 +79,18 @@ export const uploadToSupabase = async (file: Express.Multer.File, folder: string
     const fileExtension = file.originalname.split(".").pop();
     const fileName = `${Date.now()}.${fileExtension}`;
     const filePath = `${folder}/${fileName}`;
-    const bucketName = "sos"; // Supabase bucket name
+    const bucketName = "sosphotos"; // Supabase bucket name
 
     // Upload file to Supabase
-    const { data, error } = await supabase.storage
+    const { data, error } = await supabaseUpload.storage
       .from(bucketName)
       .upload(filePath, file.buffer, { contentType: file.mimetype });
-
     if (error) {
       console.error("❌ Supabase Upload Error:", error);
       throw new Error("File upload to Supabase failed.");
     }
 
-    const { publicUrl } = supabase.storage.from(bucketName).getPublicUrl(filePath).data;
+    const { publicUrl } =  supabaseUpload.storage.from(bucketName).getPublicUrl(filePath).data;
     
     if (!publicUrl) {
       throw new Error("Failed to retrieve public URL from Supabase.");
@@ -95,6 +100,34 @@ export const uploadToSupabase = async (file: Express.Multer.File, folder: string
   } catch (err: any) {
     console.error("⚠️ Upload Error:", err.message);
     return null;
+  }
+};
+export const deleteFromSupabaseUsingUrl = async (publicUrl: string) => {
+  try {
+    const bucketName = "sosphotos"; // Your Supabase bucket name
+
+    // Extract the file path from the public URL
+    const urlParts = publicUrl.split(`/storage/v1/object/public/${bucketName}/`);
+    if (urlParts.length !== 2) {
+      throw new Error("Invalid Supabase public URL.");
+    }
+
+    const filePath = urlParts[1]; // this is the actual internal path
+
+    const { data, error } = await supabaseUpload.storage
+      .from(bucketName)
+      .remove([filePath]);
+
+    if (error) {
+      console.error("❌ Supabase Delete Error:", error);
+      throw new Error("File deletion from Supabase failed.");
+    }
+
+    console.log("✅ File deleted from Supabase:", filePath);
+    return true;
+  } catch (err: any) {
+    console.error("⚠️ Delete Error:", err.message);
+    return false;
   }
 };
 export const startBroadCastTimer=(requestId:string)=>{
