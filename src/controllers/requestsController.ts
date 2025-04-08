@@ -18,6 +18,7 @@ export const sendSOSrequest = async (
     request_type,
     longitude,
     latitude,
+    image_classification
     
   } = req.body;
 
@@ -34,7 +35,8 @@ export const sendSOSrequest = async (
         longitude,
         latitude,
         radius: 2,
-        ids_rejected:[]
+        ids_rejected:[],
+        image_classification:image_classification,
       })
       .select("id")
       .single();
