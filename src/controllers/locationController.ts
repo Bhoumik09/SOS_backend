@@ -11,7 +11,7 @@ export const getLocationFromGoogle=async(req:Request, res:Response):Promise<void
               },
             }
         );
-        console.log(response.data);
+        
         res.status(200).json({msg:response.data});
     }catch(e){
         res.status(500).json({error:"API error occured"})

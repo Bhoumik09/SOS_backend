@@ -42,22 +42,25 @@ export const processAndUploadFile = async (req: Request, res: Response) => {
         },
       }
     );
+    const prediction = uploadImageResponse.data.prediction;
 
-    if(uploadImageResponse && uploadImageResponse.data.prediction){
-      const prediction = uploadImageResponse.data.prediction;
-      console.log("Prediction Response:", uploadImageResponse.data);
-      if(prediction['Predicted Class']==='Fake'){
-        await deleteFromSupabaseUsingUrl(imageUrl);
-        res.status(400).json({
-          message: "❌ Fake Image detected",
-          
-        });
-        return;
-      }
-    }
+    // if(uploadImageResponse && uploadImageResponse.data.prediction){
+    //   console.log("Prediction Response:", uploadImageResponse.data);
+    //   if(prediction['Predicted Class']==='Fake'){
+    //     await deleteFromSupabaseUsingUrl(imageUrl);
+    //     res.status(400).json({
+    //       message: "❌ Fake Image detected",
+    //       predictionClassification:prediction['Predicted Class']
+    //     });
+    //     return;
+    //   }
+    // }
     res.status(200).json({
       message: "✅ File uploaded successfully",
       imageUrl,
+      predictionClassification:prediction['Predicted Class']
+    
+
     });
   } catch (error: any) {
     console.error("❌ An error occurred:", error.message);

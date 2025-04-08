@@ -136,7 +136,7 @@ export const getNearbyRequests = async (
     const { data: requests, error } = await supabase
     .from("sos_requests")
     .select(
-      "id, phone_no, emergency_type, latitude, longitude, status, radius, photo_url, ids_rejected, assigned_handler_id"
+      "id, phone_no, emergency_type, latitude, longitude, status, radius, photo_url, ids_rejected, assigned_handler_id,image_classification"
     )
     .not("ids_rejected", "cs", `{${stationId}}`)
     .or(
@@ -150,7 +150,6 @@ export const getNearbyRequests = async (
   }
 
     if (error) throw error;
-    console.log(requests);
     // 3️⃣ Filter only nearby requests based on dynamic radius
     const nearbyRequests = requests?.filter((request) => {
       const distance = calculateDistance(
@@ -158,10 +157,7 @@ export const getNearbyRequests = async (
         stationLng,
         request.latitude,
         request.longitude
-      );
-      console.log(request)
-      console.log("distance",distance);
-      console.log("request radius",request.radius)
+      )
       return distance <= request.radius; // Only keep requests within the request’s own radius
     });
     //filter on base on
