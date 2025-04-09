@@ -139,6 +139,7 @@ export const getNearbyRequests = async (
     .select(
       "id, phone_no, emergency_type, latitude, longitude, status, radius, photo_url, ids_rejected, assigned_handler_id,image_classification"
     )
+    .eq('emergency_type',stationData.station_type)
     .not("ids_rejected", "cs", `{${stationId}}`)
     .or(
       `status.neq.resolved, and(status.eq.resolved, assigned_handler_id.eq.${stationId})`
