@@ -137,7 +137,7 @@ export const getNearbyRequests = async (
     const { data: requests, error } = await supabase
     .from("sos_requests")
     .select(
-      "id, phone_no, emergency_type, latitude, longitude, status, radius, photo_url, ids_rejected, assigned_handler_id,image_classification"
+      "id,sender_name,phone_no, emergency_type, latitude, longitude, status, radius, photo_url, ids_rejected, assigned_handler_id,image_classification"
     )
     .eq('emergency_type',stationData.station_type)
     .not("ids_rejected", "cs", `{${stationId}}`)
