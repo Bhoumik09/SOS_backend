@@ -5,7 +5,7 @@ import { acceptRequest, getNearbyRequests, rejectRequest, sendSOSrequest } from 
 const requestsRouter=express.Router();
 requestsRouter.post(
     "/send-request",
-    validateRequest(requestsSchema),
+    // validateRequest(requestsSchema),
     sendSOSrequest
   );
 requestsRouter.post(

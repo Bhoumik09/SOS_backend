@@ -21,7 +21,6 @@ export const sendSOSrequest = async (
     image_classification
     
   } = req.body;
-
   //adding the request in supabase database
   try {
     const { data, error } = await supabase
