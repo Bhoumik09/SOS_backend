@@ -58,7 +58,7 @@ export const processAndUploadFile = async (req: Request, res: Response) => {
       //   }
       // }
       
-      console.log(prediction);
+      
       res.status(200).json({
         message: "✅ File uploaded successfully",
         imageUrl,
