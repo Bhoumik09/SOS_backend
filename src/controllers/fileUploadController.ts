@@ -14,15 +14,36 @@ dotenv.config();
 
 // 🚀 Main function to process and upload files
 export const processAndUploadFile = async (req: Request, res: Response) => {
-  try {
+   try {
     // Parse uploaded files
-    const files = req.files as { image?: Express.Multer.File[] };
+    const files = req.files as {
+      image?: Express.Multer.File[];
+      video?: Express.Multer.File[];
+    };
     const imageFile = files?.image?.[0];
+    const videoFile = files?.video?.[0];
     const { requestType } = req.body as { requestType: "fire" | "medical" };
-    if (!imageFile) {
-      res.status(400).json({ error: "No image uploaded." });
+    // If a video was uploaded, skip ML verification and upload directly
+    if (videoFile) {
+      console.log("🎬 Received video upload. uploading to Supabase...");
+      const videoUrl = await uploadToSupabase(videoFile, requestType);
+      if (!videoUrl) {
+        res.status(500).json({ error: "Video upload failed." });
+        return;
+      }
+
+      res.status(200).json({
+        message: "✅ Video uploaded successfully",
+        videoUrl,
+      });
       return;
     }
+
+    if (!imageFile) {
+      res.status(400).json({ error: "No image or video uploaded." });
+      return;
+    }
+
     console.log("📸 Received image for fire severity classification...");
     const imageUrl = await uploadToSupabase(imageFile, requestType);
 
@@ -58,7 +79,6 @@ export const processAndUploadFile = async (req: Request, res: Response) => {
       //   }
       // }
       
-      
       res.status(200).json({
         message: "✅ File uploaded successfully",
         imageUrl,
@@ -86,7 +106,6 @@ export const processAndUploadFile = async (req: Request, res: Response) => {
       //     return;
       //   }
       // }
-      
       
       res.status(200).json({
         message: "✅ File uploaded successfully",
