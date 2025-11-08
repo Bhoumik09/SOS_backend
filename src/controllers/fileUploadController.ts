@@ -1,8 +1,6 @@
 import { Request, Response } from "express";
 import dotenv from "dotenv";
 import {
-  deleteFromSupabaseUsingUrl,
-  predictFireSeverity,
   uploadToSupabase,
 } from "../utils/helperFunctions";
 import axios from "axios";

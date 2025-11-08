@@ -18,8 +18,8 @@ export const sendSOSrequest = async (
     request_type,
     longitude,
     latitude,
-    image_classification
-    
+    image_classification,
+    video_url,
   } = req.body;
   //adding the request in supabase database
   try {
@@ -30,6 +30,7 @@ export const sendSOSrequest = async (
         phone_no: mobile,
         photo_url: image_url,
         device_id,
+        video_url:video_url,
         emergency_type: request_type,
         longitude,
         latitude,
